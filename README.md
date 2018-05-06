@@ -1,2 +1,2 @@
 # posts-android-client
-Postify app
+Postifi app
