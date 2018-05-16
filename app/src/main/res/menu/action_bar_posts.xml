@@ -6,4 +6,9 @@
         android:icon="@drawable/ic_add_black_24dp"
         android:title="@string/action_add"
         app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_filter"
+        android:icon="@drawable/ic_filter_list_black_24dp"
+        android:title="@string/action_filter"
+        app:showAsAction="always"/>
 </menu>
