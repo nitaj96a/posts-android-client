@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/pref_sort_posts_title"
+        android:key="pref_sort_posts_settings">
+        <CheckBoxPreference
+            android:key="pref_sort_by_date"
+            android:title="dummy"
+            android:summary="dummy"
+            android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="pref_sort_by_popularity"
+            android:title="dummy"
+            android:summary="dummy"
+            android:defaultValue="true" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="dummy"
+        android:key="pref_sort_comments_settings">
+        <CheckBoxPreference
+            android:key="pref_sort_comments_by_date"
+            android:title="dummy"
+            android:summary="dummy"
+            android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="pref_sort_comments_by_popularity"
+            android:title="dummy"
+            android:summary="dummy"
+            android:defaultValue="true" />
+    </PreferenceCategory>
+</PreferenceScreen>
