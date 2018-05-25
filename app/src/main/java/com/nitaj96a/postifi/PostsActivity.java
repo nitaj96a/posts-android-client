@@ -90,6 +90,7 @@ public class PostsActivity extends AppCompatActivity {
 
             default:
                 Log.i("default", "clicked default");
+                mDrawerLayout.openDrawer(GravityCompat.START);
                 return super.onOptionsItemSelected(item);
 
         }

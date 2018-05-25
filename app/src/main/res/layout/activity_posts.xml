@@ -33,7 +33,7 @@
 
         android:layout_gravity="start"
         app:menu="@menu/posts_activity_drawer_menu"
-        app:headerLayout="@layout/posts_activity_drawer_header">
+        app:headerLayout="@layout/drawer_header">
 
     </android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>
