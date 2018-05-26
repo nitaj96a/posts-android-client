@@ -1,5 +1,7 @@
 package com.nitaj96a.postifi;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -7,19 +9,23 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener, ViewPager.OnPageChangeListener{
 
     private DrawerLayout drawerLayout;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-
+    private String comment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +109,11 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
 
             case R.id.action_comment:
                 Log.i("comment", "clicked comment");
+                startCommentDialog(this);
+                // Send a POST request to api and create a new comment
+                // toast "Sending comment"
+                // if a proper response is received toast "commented successfully"
+                // else toast "commenting failed"
                 return true;
 
             // no "home" id...
@@ -118,6 +129,39 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    public void startCommentDialog(Context context){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Your comment");
+
+        final EditText input = new EditText(context);
+        // Try to make the input stop scrolling horizontally and break into a new line!
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setLines(5);
+        input.setMaxLines(10);
+        input.setGravity(Gravity.LEFT);
+
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                comment = input.getText().toString();
+                Log.i("comment", comment);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                comment = null;
+            }
+        });
+
+        builder.show();
     }
 
     @Override
