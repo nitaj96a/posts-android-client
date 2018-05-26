@@ -58,6 +58,12 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
                                 Intent intent_s = new Intent(getBaseContext(), SettingsActivity.class);
                                 startActivity(intent_s);
                                 return true;
+                            case R.id.nav_logout:
+                                // Remove login data from SharedPreferences...
+                                Intent intent_l = new Intent(getBaseContext(), LoginActivity.class);
+                                // Clear back-stack to disable back navigation ?
+                                startActivity(intent_l);
+                                return true;
                         }
                         // Add code here to update the UI based on the item selected
                         // For example, swap UI fragments here
