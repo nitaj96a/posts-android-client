@@ -11,6 +11,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
+
+import com.nitaj96a.postifi.Model.Post;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by n on 5/7/2018.
@@ -18,6 +24,9 @@ import android.view.MenuItem;
 
 public class PostsActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
+
+    private ListView listView;
+    private PostAdapter postsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +40,7 @@ public class PostsActivity extends AppCompatActivity {
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
+        // ----------- NAVIGATION DRAWER -------------------
         mDrawerLayout = findViewById(R.id.posts_drawer_layout);
 
         NavigationView navigationView = findViewById(R.id.left_drawer);
@@ -62,6 +72,20 @@ public class PostsActivity extends AppCompatActivity {
                         return true;
                     }
                 });
+        // ------------- LIST VIEW -------------------
+
+        listView = (ListView) findViewById(R.id.list_view_posts);
+        ArrayList<Post> postsList = new ArrayList<>();
+
+        // Filtering and Sorting code will probably go here
+            // get a list of all posts
+            // filter it with a lambda func ?
+            // apply sort from SharedPreferences...
+
+
+        postsAdapter = new PostAdapter(this, postsList);
+        listView.setAdapter(postsAdapter);
+
     }
 
     @Override

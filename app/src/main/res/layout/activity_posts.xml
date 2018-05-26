@@ -17,11 +17,15 @@
             android:background="?attr/colorPrimary"
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"/>
-        
+
+        <!--probably will need a Constraint layout or smth-->
         <ListView
+            android:id="@+id/list_view_posts"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"></ListView>
+            android:layout_height="wrap_content">
+
+
+        </ListView>
         
     </FrameLayout>
 
