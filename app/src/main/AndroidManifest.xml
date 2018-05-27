@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nitaj96a.postifi">
-
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,17 +11,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".LoginActivity">
+        <activity android:name=".Activity.LoginActivity">
 
         </activity>
         <activity
-            android:name=".PostsActivity"
+            android:name=".Activity.PostsActivity"
             android:label="@string/title_activity_posts" />
         <activity
-            android:name=".SettingsActivity"
+            android:name=".Activity.SettingsActivity"
             android:label="@string/title_activity_posts" />
-        <activity android:name=".CreatePostActivity" />
-        <activity android:name=".ReadPostActivity">
+        <activity android:name=".Activity.CreatePostActivity" />
+        <activity android:name=".Activity.ReadPostActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

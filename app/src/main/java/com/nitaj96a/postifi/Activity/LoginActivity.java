@@ -1,9 +1,11 @@
-package com.nitaj96a.postifi;
+package com.nitaj96a.postifi.Activity;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+
+import com.nitaj96a.postifi.R;
 
 public class LoginActivity extends AppCompatActivity {
 

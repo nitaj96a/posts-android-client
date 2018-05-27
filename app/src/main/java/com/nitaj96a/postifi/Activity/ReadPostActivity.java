@@ -1,4 +1,4 @@
-package com.nitaj96a.postifi;
+package com.nitaj96a.postifi.Activity;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,8 +21,10 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.nitaj96a.postifi.CommentAdapter;
 import com.nitaj96a.postifi.Model.Comment;
-import com.nitaj96a.postifi.Model.Post;
+import com.nitaj96a.postifi.Pager;
+import com.nitaj96a.postifi.R;
 
 import java.util.ArrayList;
 

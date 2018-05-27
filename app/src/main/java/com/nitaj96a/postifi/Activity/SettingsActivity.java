@@ -1,10 +1,12 @@
-package com.nitaj96a.postifi;
+package com.nitaj96a.postifi.Activity;
 
 import android.preference.PreferenceActivity;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RadioButton;
+
+import com.nitaj96a.postifi.R;
 
 public class SettingsActivity extends PreferenceActivity {
 

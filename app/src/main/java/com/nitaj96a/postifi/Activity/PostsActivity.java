@@ -1,4 +1,4 @@
-package com.nitaj96a.postifi;
+package com.nitaj96a.postifi.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,9 +14,10 @@ import android.view.MenuItem;
 import android.widget.ListView;
 
 import com.nitaj96a.postifi.Model.Post;
+import com.nitaj96a.postifi.PostAdapter;
+import com.nitaj96a.postifi.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by n on 5/7/2018.
