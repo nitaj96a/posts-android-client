@@ -19,8 +19,17 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.ListView;
+
+import com.nitaj96a.postifi.Model.Comment;
+import com.nitaj96a.postifi.Model.Post;
+
+import java.util.ArrayList;
 
 public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener, ViewPager.OnPageChangeListener{
+
+    private ListView listView;
+    private CommentAdapter commentAdapter;
 
     private DrawerLayout drawerLayout;
     private TabLayout tabLayout;
@@ -91,6 +100,18 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
         viewPager.setAdapter(adapter);
 
         tabLayout.addOnTabSelectedListener(this);
+
+        listView = (ListView) findViewById(R.id.list_view_comments);
+        ArrayList<Comment> commentsList = new ArrayList<>();
+
+        // Filtering and Sorting code will probably go here
+        // get a list of all posts
+        // filter it with a lambda func ?
+        // apply sort from SharedPreferences...
+
+
+        commentAdapter = new CommentAdapter(this, commentsList);
+        listView.setAdapter(commentAdapter);
     }
 
     @Override
