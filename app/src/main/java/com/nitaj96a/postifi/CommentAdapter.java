@@ -22,7 +22,7 @@ import java.util.List;
 
 public class CommentAdapter extends ArrayAdapter<Comment> {
     private Context mContext;
-    private List<Comment> commentsList = new ArrayList<>();
+    private ArrayList<Comment> commentsList = new ArrayList<>();
 
     public CommentAdapter(Context context, ArrayList<Comment> list) {
         super(context, 0, list);

@@ -23,10 +23,17 @@ import android.widget.ListView;
 
 import com.nitaj96a.postifi.CommentAdapter;
 import com.nitaj96a.postifi.Model.Comment;
+import com.nitaj96a.postifi.Model.Post;
 import com.nitaj96a.postifi.Pager;
 import com.nitaj96a.postifi.R;
+import com.nitaj96a.postifi.Service.CommentService;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener, ViewPager.OnPageChangeListener{
 
@@ -37,6 +44,12 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private String comment;
+
+    private Post currentPost;
+
+    private Comment selectedComment;
+    private CommentService commentService;
+    private  ArrayList<Comment> commentsList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,16 +197,29 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
 
             listView = (ListView) findViewById(R.id.list_view_comments);
             Log.i("list_view", listView.toString());
-            ArrayList<Comment> commentsList = new ArrayList<>();
-
-            // Filtering and Sorting code will probably go here
-            // get a list of all posts
-            // filter it with a lambda func ?
-            // apply sort from SharedPreferences...
 
 
-            commentAdapter = new CommentAdapter(this, commentsList);
-            listView.setAdapter(commentAdapter);
+            Call<ArrayList<Comment>> call = commentService.getCommentsByPostId(currentPost.getId());
+
+            call.enqueue(new Callback<ArrayList<Comment>>() {
+                @Override
+                public void onResponse(Call<ArrayList<Comment>> call, Response<ArrayList<Comment>> response) {
+                    commentsList = response.body();
+                    // Sort the list here by the criteria
+                    // specified in SharedPreferences
+
+                    commentAdapter = new CommentAdapter(getApplicationContext(), commentsList);
+                    listView.setAdapter(commentAdapter);
+                }
+
+                @Override
+                public void onFailure(Call<ArrayList<Comment>> call, Throwable t) {
+                    // maybe add some message infoming
+                    // the user of the failure, maybe not...
+                    t.printStackTrace();
+                }
+            });
+
         }
     }
 
