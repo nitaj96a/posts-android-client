@@ -3,23 +3,44 @@ package com.nitaj96a.postifi.Model;
 import android.graphics.Bitmap;
 import android.location.Location;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by n on 5/16/2018.
  */
 
-public class Post {
+public class Post implements Serializable {
+    @SerializedName(value = "id")
+    @Expose
     private int id;
+    @SerializedName(value = "title")
+    @Expose
     private String title;
+    @SerializedName(value = "description")
+    @Expose
     private String description;
+    @SerializedName(value = "photo")
+    @Expose
     private Bitmap photo;
+    @SerializedName(value = "date")
+    @Expose
     private Date date;
+    @SerializedName(value = "likes")
+    @Expose
     private int likes;
+    @SerializedName(value = "dislikes")
+    @Expose
     private int dislikes;
     private Location location;
+    // Maybe make this a list.. if a Post could have multiple tags?
     private Tag tag;
+    @SerializedName(value = "owner")
+    @Expose
     private User owner;
     private ArrayList<Comment> comments;
 

@@ -1,5 +1,6 @@
 package com.nitaj96a.postifi.Activity;
 
+import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -8,16 +9,27 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.google.gson.Gson;
 import com.nitaj96a.postifi.Model.Post;
 import com.nitaj96a.postifi.PostAdapter;
 import com.nitaj96a.postifi.R;
+import com.nitaj96a.postifi.Service.PostService;
+import com.nitaj96a.postifi.Service.ServiceUtils;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by n on 5/7/2018.
@@ -28,6 +40,11 @@ public class PostsActivity extends AppCompatActivity {
 
     private ListView listView;
     private PostAdapter postsAdapter;
+
+    private PostService postService;
+    private ArrayList<Post> postsList = new ArrayList<>();
+
+    private Post selectedPost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,16 +99,40 @@ public class PostsActivity extends AppCompatActivity {
         // ------------- LIST VIEW -------------------
 
         listView = (ListView) findViewById(R.id.list_view_posts);
-        ArrayList<Post> postsList = new ArrayList<>();
-
-        // Filtering and Sorting code will probably go here
-            // get a list of all posts
-            // filter it with a lambda func ?
-            // apply sort from SharedPreferences...
 
 
-        postsAdapter = new PostAdapter(this, postsList);
-        listView.setAdapter(postsAdapter);
+        postService = ServiceUtils.postService;
+
+
+        Call call = postService.getPosts();
+
+        call.enqueue(new Callback<ArrayList<Post>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
+                postsList = response.body();
+                // Filtering and Sorting code will probably go here
+                // get a list of all posts
+                // filter it with a lambda func ?
+                // apply sort from SharedPreferences...
+                postsAdapter = new PostAdapter(getApplicationContext(), postsList);
+                listView.setAdapter(postsAdapter);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<Post>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedPost = postsList.get(i);
+                Intent startReadPost = new Intent(PostsActivity.this, ReadPostActivity.class);
+                startReadPost.putExtra("Post", new Gson().toJson(selectedPost));
+                startActivity(startReadPost);
+            }
+        });
 
     }
 

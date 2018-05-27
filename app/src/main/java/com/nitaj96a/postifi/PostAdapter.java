@@ -21,7 +21,7 @@ import java.util.List;
 
 public class PostAdapter extends ArrayAdapter<Post> {
     private Context mContext;
-    private List<Post> postsList = new ArrayList<>();
+    private ArrayList<Post> postsList = new ArrayList<>();
 
     public PostAdapter(Context context, ArrayList<Post> list) {
         super(context, 0, list);
