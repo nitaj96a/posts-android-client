@@ -27,6 +27,7 @@ import com.nitaj96a.postifi.Model.Post;
 import com.nitaj96a.postifi.Pager;
 import com.nitaj96a.postifi.R;
 import com.nitaj96a.postifi.Service.CommentService;
+import com.nitaj96a.postifi.Service.ServiceUtils;
 
 import java.util.ArrayList;
 
@@ -198,6 +199,7 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
             listView = (ListView) findViewById(R.id.list_view_comments);
             Log.i("list_view", listView.toString());
 
+            commentService = ServiceUtils.commentService;
 
             Call<ArrayList<Comment>> call = commentService.getCommentsByPostId(currentPost.getId());
 
@@ -205,8 +207,15 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
                 @Override
                 public void onResponse(Call<ArrayList<Comment>> call, Response<ArrayList<Comment>> response) {
                     commentsList = response.body();
-                    // Sort the list here by the criteria
-                    // specified in SharedPreferences
+
+                    /*
+                    Sort the list here by the criteria
+                    specified in SharedPreferences
+
+                    or design an api to support sorting
+
+                    GET /comments?sort=date,popularity
+                    */
 
                     commentAdapter = new CommentAdapter(getApplicationContext(), commentsList);
                     listView.setAdapter(commentAdapter);

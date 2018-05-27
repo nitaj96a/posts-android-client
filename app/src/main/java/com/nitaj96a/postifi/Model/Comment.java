@@ -1,12 +1,13 @@
 package com.nitaj96a.postifi.Model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by n on 5/16/2018.
  */
 
-public class Comment {
+public class Comment implements Serializable{
     private int id;
     private String title;
     private String description;

@@ -1,5 +1,7 @@
 package com.nitaj96a.postifi.Service;
 
+import com.nitaj96a.postifi.Model.User;
+
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -34,4 +36,6 @@ public class ServiceUtils {
             .build();
 
     public static PostService postService = retrofit.create(PostService.class);
+    public static UserService userService = retrofit.create(UserService.class);
+    public static CommentService commentService = retrofit.create(CommentService.class);
 }
