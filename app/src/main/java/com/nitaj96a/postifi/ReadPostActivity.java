@@ -101,17 +101,7 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
 
         tabLayout.addOnTabSelectedListener(this);
 
-        listView = (ListView) findViewById(R.id.list_view_comments);
-        ArrayList<Comment> commentsList = new ArrayList<>();
 
-        // Filtering and Sorting code will probably go here
-        // get a list of all posts
-        // filter it with a lambda func ?
-        // apply sort from SharedPreferences...
-
-
-        commentAdapter = new CommentAdapter(this, commentsList);
-        listView.setAdapter(commentAdapter);
     }
 
     @Override
@@ -188,6 +178,21 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
         viewPager.setCurrentItem(tab.getPosition());
+        if (tabLayout.getSelectedTabPosition() == 1) {
+
+            listView = (ListView) findViewById(R.id.list_view_comments);
+            Log.i("list_view", listView.toString());
+            ArrayList<Comment> commentsList = new ArrayList<>();
+
+            // Filtering and Sorting code will probably go here
+            // get a list of all posts
+            // filter it with a lambda func ?
+            // apply sort from SharedPreferences...
+
+
+            commentAdapter = new CommentAdapter(this, commentsList);
+            listView.setAdapter(commentAdapter);
+        }
     }
 
     @Override
