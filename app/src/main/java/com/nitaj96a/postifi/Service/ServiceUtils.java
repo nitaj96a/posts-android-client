@@ -1,5 +1,7 @@
 package com.nitaj96a.postifi.Service;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.nitaj96a.postifi.Model.User;
 
 import java.util.concurrent.TimeUnit;
@@ -27,7 +29,11 @@ public class ServiceUtils {
         return client;
     }
 
-    static final String BASE_URL="http:127.0.0.1:8080/api/";
+    static final String BASE_URL="http:192.168.1.3:8080/PostifiRest/api/";
+
+    static Gson gson = new GsonBuilder()
+            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+            .create();
 
     public static Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -38,4 +44,5 @@ public class ServiceUtils {
     public static PostService postService = retrofit.create(PostService.class);
     public static UserService userService = retrofit.create(UserService.class);
     public static CommentService commentService = retrofit.create(CommentService.class);
+    public static TagService tagService = retrofit.create(TagService.class);
 }
