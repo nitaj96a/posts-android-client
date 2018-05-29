@@ -5,27 +5,33 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.nitaj96a.postifi.Model.JSONContainerUser;
 import com.nitaj96a.postifi.Model.User;
 import com.nitaj96a.postifi.R;
 import com.nitaj96a.postifi.Service.ServiceUtils;
 import com.nitaj96a.postifi.Service.UserService;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    SharedPreferences sharedPreferences;
-    User user;
-    String username;
-    String password;
+    private SharedPreferences sharedPreferences;
+    private User user;
+    private String username;
+    private String password;
 
-    UserService userService;
+    private UserService userService;
+    private JSONContainerUser containerUser;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +44,32 @@ public class LoginActivity extends AppCompatActivity {
     public void login(final String username, final String password) {
         userService = ServiceUtils.userService;
 
-        Call<User> call = userService.getUserByUsername(username);
+//        Call<ResponseBody> responseBodyCall = userService.getUserByUsernameResponseBody(username);
+//
+//        responseBodyCall.enqueue(new Callback<ResponseBody>() {
+//            @Override
+//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                //Log.i("response body", response.body().string());
+//                Log.w("2.0 getFeed => ",new GsonBuilder().setPrettyPrinting().create().toJson(response));
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ResponseBody> call, Throwable t) {
+//
+//            }
+//        });
 
-        call.enqueue(new Callback<User>() {
+        Call<JSONContainerUser> call = userService.getUserByUsername(username);
+
+        call.enqueue(new Callback<JSONContainerUser>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                user = response.body();
+            public void onResponse(Call<JSONContainerUser> call, Response<JSONContainerUser> response) {
+                containerUser = response.body();
+                user = containerUser.getUser();
+                Log.i("response", user.toString());
+                Log.i("response1", response.raw().body().toString());
+                Log.i("responsebody", response.body().toString());
+                //Log.i("responsebodyusername", response.body().getUsername());
                 if (user.getUsername().equals(username) && user.getPassword().equals(password)){
                     SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -55,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(Call<JSONContainerUser> call, Throwable t) {
                 // Make a toast or something...
                 t.printStackTrace();
             }

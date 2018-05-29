@@ -1,6 +1,5 @@
 package com.nitaj96a.postifi.Activity;
 
-import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -18,11 +17,16 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
+import com.nitaj96a.postifi.Model.JSONArrayContainerPosts;
+import com.nitaj96a.postifi.Model.JSONArrayContainerTags;
 import com.nitaj96a.postifi.Model.Post;
+import com.nitaj96a.postifi.Model.Tag;
 import com.nitaj96a.postifi.PostAdapter;
 import com.nitaj96a.postifi.R;
 import com.nitaj96a.postifi.Service.PostService;
 import com.nitaj96a.postifi.Service.ServiceUtils;
+import com.nitaj96a.postifi.Service.TagService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,9 +46,13 @@ public class PostsActivity extends AppCompatActivity {
     private PostAdapter postsAdapter;
 
     private PostService postService;
-    private ArrayList<Post> postsList = new ArrayList<>();
+    private TagService tagService;
+    private List<Post> postsList = new ArrayList<>();
+    private List<Tag> tagsList = new ArrayList<>();
 
     private Post selectedPost;
+    private JSONArrayContainerPosts posts;
+    private JSONArrayContainerTags tags;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,30 +104,72 @@ public class PostsActivity extends AppCompatActivity {
                         return true;
                     }
                 });
+
+
+        // --------------- LOADING TAGS BEFORE POSTS
+
+        tagService = ServiceUtils.tagService;
+
+        Call<JSONArrayContainerTags> callTags = tagService.getTags();
+
+        callTags.enqueue(new Callback<JSONArrayContainerTags>() {
+            @Override
+            public void onResponse(Call<JSONArrayContainerTags> call, Response<JSONArrayContainerTags> response) {
+                tags = response.body();
+                tagsList = tags.getTag();
+            }
+
+            @Override
+            public void onFailure(Call<JSONArrayContainerTags> call, Throwable t) {
+
+            }
+        });
+
+
+//        Call<ResponseBody> responseBodyCall = postService.getPostsResponseBody();
+//
+//        responseBodyCall.enqueue(new Callback<ResponseBody>() {
+//            @Override
+//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                Log.w("2. Full json res ",new GsonBuilder().setPrettyPrinting().create().toJson(response));
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ResponseBody> call, Throwable t) {
+//
+//            }
+//        });
+
         // ------------- LIST VIEW -------------------
 
         listView = (ListView) findViewById(R.id.list_view_posts);
 
-
         postService = ServiceUtils.postService;
 
 
-        Call call = postService.getPosts();
+        Call<JSONArrayContainerPosts> call = postService.getPosts();
 
-        call.enqueue(new Callback<ArrayList<Post>>() {
+
+        call.enqueue(new Callback<JSONArrayContainerPosts>() {
             @Override
-            public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
-                postsList = response.body();
+            public void onResponse(Call<JSONArrayContainerPosts> call, Response<JSONArrayContainerPosts> response) {
+                Log.i("postslist", response.body().toString());
+
+                posts = response.body();
+                postsList = posts.getPost();
+
                 // Filtering and Sorting code will probably go here
                 // get a list of all posts
                 // filter it with a lambda func ?
                 // apply sort from SharedPreferences...
-                postsAdapter = new PostAdapter(getApplicationContext(), postsList);
+                postsAdapter = new PostAdapter(getApplicationContext(),(ArrayList<Post>) postsList);
                 listView.setAdapter(postsAdapter);
             }
 
             @Override
-            public void onFailure(Call<ArrayList<Post>> call, Throwable t) {
+            public void onFailure(Call<JSONArrayContainerPosts> call, Throwable t) {
+                Log.i("call", call.toString());
+                Log.i("call", "in enqueue");
                 t.printStackTrace();
             }
         });
