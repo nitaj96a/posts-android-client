@@ -3,6 +3,7 @@ package com.nitaj96a.postifi;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +45,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
 
         TextView title = (TextView) listItem.findViewById(R.id.textView_post_title);
         title.setText(currentPost.getTitle());
+        Log.i("currentPost", currentPost.toString());
 
         TextView likesDislikes = (TextView) listItem.findViewById(R.id.textView_like_dislike_count);
         likesDislikes.setText(currentPost.getLikes() + " \uD83D\uDC4D " + currentPost.getDislikes() + " \uD83D\uDC4E");

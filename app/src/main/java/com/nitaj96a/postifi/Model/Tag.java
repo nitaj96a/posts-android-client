@@ -1,13 +1,21 @@
 package com.nitaj96a.postifi.Model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by n on 5/16/2018.
  */
 
-public class Tag {
+public class Tag implements Serializable{
+    @Expose
+    @SerializedName("id")
     private int id;
+    @Expose
+    @SerializedName("name")
     private String name;
     private ArrayList<Post> posts;
 

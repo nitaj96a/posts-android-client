@@ -20,6 +20,7 @@ import retrofit2.http.Path;
 public interface CommentService {
 
     @Headers({
+            "User-Agent: Mobile-Android",
             "Content-Type:application/json"
     })
 

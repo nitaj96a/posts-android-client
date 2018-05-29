@@ -12,17 +12,17 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class User implements Serializable{
+    @SerializedName("id")
     @Expose
     private int id;
-    @Expose
     private String name;
-    @Expose
     private String email; //maybe use Email?
+    @SerializedName("username")
     @Expose
     private String username; //
+    @SerializedName("password")
     @Expose
     private String password;//oops
-    @Expose
     private Bitmap photo;
     private ArrayList<Post> posts;
     private ArrayList<Comment> comments;
@@ -60,6 +60,17 @@ public class User implements Serializable{
         this.username = username;
         this.password = password;
         this.photo = photo;
+    }
+
+    public User(int id, String name, String email, String username, String password, Bitmap photo, ArrayList<Post> posts, ArrayList<Comment> comments) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.photo = photo;
+        this.posts = posts;
+        this.comments = comments;
     }
 
     public int getId() {
@@ -124,5 +135,14 @@ public class User implements Serializable{
 
     public void setComments(ArrayList<Comment> comments) {
         this.comments = comments;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                "\n";
     }
 }

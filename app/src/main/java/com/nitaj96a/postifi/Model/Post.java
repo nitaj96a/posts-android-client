@@ -24,9 +24,9 @@ public class Post implements Serializable {
     @SerializedName(value = "description")
     @Expose
     private String description;
-    @SerializedName(value = "photo")
-    @Expose
-    private Bitmap photo;
+//    @SerializedName(value = "photo")
+//    @Expose
+    private transient Bitmap photo;
     @SerializedName(value = "date")
     @Expose
     private Date date;
@@ -36,13 +36,17 @@ public class Post implements Serializable {
     @SerializedName(value = "dislikes")
     @Expose
     private int dislikes;
-    private Location location;
+    private transient Location location;
     // Maybe make this a list.. if a Post could have multiple tags?
+//    @SerializedName("tag")
+//    @Expose
+    @SerializedName("tag")
+    @Expose
     private Tag tag;
     @SerializedName(value = "owner")
     @Expose
     private User owner;
-    private ArrayList<Comment> comments;
+    private transient ArrayList<Comment> comments;
 
     public Post() {
 
@@ -172,4 +176,21 @@ public class Post implements Serializable {
         this.comments = comments;
     }
 
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", photo=" + photo +
+                ", date=" + date +
+                ", likes=" + likes +
+                ", dislikes=" + dislikes +
+                ", location=" + location +
+                ", tag=" + tag +
+                ", owner=" + owner +
+                ", comments=" + comments +
+                '}';
+    }
 }
