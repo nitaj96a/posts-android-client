@@ -1,10 +1,9 @@
 package com.nitaj96a.postifi.Service;
 
+import com.nitaj96a.postifi.Model.JSONArrayContainerPosts;
 import com.nitaj96a.postifi.Model.Post;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -20,12 +19,16 @@ import retrofit2.http.Path;
 public interface PostService {
 
     @Headers({
+            "User-Agent: Mobile-Android",
             "Content-Type:application/json"
     })
 
     //localhost:8080/api/posts
     @GET("posts")
-    Call<ArrayList<Post>> getPosts();
+    Call<JSONArrayContainerPosts> getPosts();
+
+    @GET("posts")
+    Call<ResponseBody> getPostsResponseBody();
 
     @GET("posts/{id}")
     Call<Post> getPostById(@Path("id") Integer id);
