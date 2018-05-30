@@ -2,6 +2,7 @@ package com.nitaj96a.postifi.Activity;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -13,20 +14,47 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.gson.Gson;
+import com.nitaj96a.postifi.Model.JSONArrayContainerTags;
 import com.nitaj96a.postifi.Model.Post;
+import com.nitaj96a.postifi.Model.Tag;
+import com.nitaj96a.postifi.Model.User;
 import com.nitaj96a.postifi.R;
+import com.nitaj96a.postifi.Service.PostService;
+import com.nitaj96a.postifi.Service.ServiceUtils;
+import com.nitaj96a.postifi.Service.TagService;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CreatePostActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private FusedLocationProviderClient mFusedLocationClient;
-    private Post newPost;
+    private Post newPost = new Post();
+
+    PostService postService;
+    TagService tagService;
+    User currentUser = new User();
+    SharedPreferences sharedPreferences;
+    Spinner spinner;
+    JSONArrayContainerTags tagsContainer;
+    List<Tag> tagsList = new ArrayList<>();
+    ArrayList<String> tagStrings = new ArrayList<>();
 
     boolean doubleBackToExitPressedOnce = false;
 
@@ -103,6 +131,37 @@ public class CreatePostActivity extends AppCompatActivity {
                         return true;
                     }
                 });
+
+        spinner = findViewById(R.id.spinner);
+
+        tagService = ServiceUtils.tagService;
+        Call<JSONArrayContainerTags> call = tagService.getTags();
+
+        call.enqueue(new Callback<JSONArrayContainerTags>() {
+            @Override
+            public void onResponse(Call<JSONArrayContainerTags> call, Response<JSONArrayContainerTags> response) {
+                tagsContainer = response.body();
+                tagsList = tagsContainer.getTag();
+                for (Tag t : tagsList) {
+                    tagStrings.add(t.getName());
+                }
+
+
+                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
+                        (getApplicationContext(), android.R.layout.simple_spinner_item,
+                                tagStrings); //selected item will look like a spinner set from XML
+                spinnerArrayAdapter.setDropDownViewResource(android.R.layout
+                        .simple_spinner_dropdown_item);
+                spinner.setAdapter(spinnerArrayAdapter);
+            }
+
+            @Override
+            public void onFailure(Call<JSONArrayContainerTags> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         if ( ContextCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
@@ -152,10 +211,54 @@ public class CreatePostActivity extends AppCompatActivity {
 
             case R.id.action_confirm:
                 Log.i("confirm", "clicked confirm");
+                EditText editTextTitle = findViewById(R.id.editText2);
+                EditText editTextDescription = findViewById(R.id.editText3);
+
+                newPost.setTitle(editTextTitle.getText().toString());
+                newPost.setDescription(editTextDescription.getText().toString());
+
+                tagService = ServiceUtils.tagService;
+                Spinner spinner = findViewById(R.id.spinner);
+
+                for (Tag t: tagsList) {
+                    if (t.getName().equals((String) spinner.getSelectedItem())){
+                        newPost.setTag(t);
+                    }
+                }
+
+
+
+                sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                currentUser = new Gson().fromJson(sharedPreferences.getString("currentUser",""), User.class);
+
+                newPost.setOwner(currentUser);
+
+
+                postService = ServiceUtils.postService;
+                Call<Post> call = postService.createPost(newPost);
+                call.enqueue(new Callback<Post>() {
+                    @Override
+                    public void onResponse(Call<Post> call, Response<Post> response) {
+                        Toast.makeText(CreatePostActivity.this,"Created the post!",Toast.LENGTH_SHORT).show();
+                        Intent intent_a = new Intent(getBaseContext(), PostsActivity.class);
+                        finish();
+                        startActivity(intent_a);
+                    }
+
+                    @Override
+                    public void onFailure(Call<Post> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
+
                 return true;
 
             case R.id.action_cancel:
                 Log.i("cancel", "clicked cancel");
+                Intent intent_a = new Intent(getBaseContext(), PostsActivity.class);
+                Toast.makeText(CreatePostActivity.this,"Canceled",Toast.LENGTH_SHORT).show();
+                finish();
+                startActivity(intent_a);
                 return true;
 
             // no "home" id...
