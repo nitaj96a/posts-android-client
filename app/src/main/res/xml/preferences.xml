@@ -4,28 +4,35 @@
         android:title="@string/pref_sort_posts_title"
         android:key="pref_sort_posts_settings">
         <CheckBoxPreference
+            android:id="@+id/cb1"
             android:key="pref_sort_by_date"
-            android:title="dummy"
-            android:summary="dummy"
-            android:defaultValue="false" />
+            android:title="Date"
+            android:summary="Sort posts by date"
+            android:defaultValue="false"
+            />
         <CheckBoxPreference
+            android:id="@+id/cb2"
             android:key="pref_sort_by_popularity"
-            android:title="dummy"
-            android:summary="dummy"
-            android:defaultValue="true" />
+            android:title="Popularity"
+            android:summary="Sort posts by popularity"
+            android:defaultValue="true"
+            />
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="dummy"
+        android:title="Sort Comments"
         android:key="pref_sort_comments_settings">
         <CheckBoxPreference
+            android:id="@+id/cb3"
             android:key="pref_sort_comments_by_date"
-            android:title="dummy"
-            android:summary="dummy"
-            android:defaultValue="false" />
+            android:title="Date"
+            android:summary="Sort comments by date"
+            android:defaultValue="false"
+            />
         <CheckBoxPreference
+            android:id="@+id/cb4"
             android:key="pref_sort_comments_by_popularity"
-            android:title="dummy"
-            android:summary="dummy"
+            android:title="Popularity"
+            android:summary="Sort comments by popularity"
             android:defaultValue="true" />
     </PreferenceCategory>
 </PreferenceScreen>

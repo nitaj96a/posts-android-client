@@ -29,7 +29,7 @@ public class ServiceUtils {
         return client;
     }
 
-    static final String BASE_URL="http:192.168.1.3:8080/PostifiRest/api/";
+    static final String BASE_URL="http://580b8697.ngrok.io/PostifiRest/api/";
 
     static Gson gson = new GsonBuilder()
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")

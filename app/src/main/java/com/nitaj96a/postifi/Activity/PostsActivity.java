@@ -1,8 +1,11 @@
 package com.nitaj96a.postifi.Activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.CheckBoxPreference;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -31,6 +34,9 @@ import com.nitaj96a.postifi.Service.ServiceUtils;
 import com.nitaj96a.postifi.Service.TagService;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -57,6 +63,9 @@ public class PostsActivity extends AppCompatActivity {
     private JSONArrayContainerTags tags;
 
     boolean doubleBackToExitPressedOnce = false;
+    SharedPreferences sharedPreferences;
+
+    boolean sortByDate;
 
     @Override
     public void onBackPressed() {
@@ -114,7 +123,7 @@ public class PostsActivity extends AppCompatActivity {
                             case R.id.nav_settings:
                                 Intent intent_s = new Intent(getBaseContext(), SettingsActivity.class);
                                 startActivity(intent_s);
-
+                                finish();
                                 return true;
                             case R.id.nav_logout:
                                 // Remove login data from SharedPreferences...
@@ -168,6 +177,11 @@ public class PostsActivity extends AppCompatActivity {
 
         // ------------- LIST VIEW -------------------
 
+        sharedPreferences = getSharedPreferences("MyPrefs",MODE_PRIVATE);
+        sortByDate = sharedPreferences.getBoolean("pref_sort_by_date", true);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sortByDate = sharedPreferences.getBoolean("pref_sort_by_date", true);
+
         listView = (ListView) findViewById(R.id.list_view_posts);
 
         postService = ServiceUtils.postService;
@@ -183,6 +197,23 @@ public class PostsActivity extends AppCompatActivity {
 
                 posts = response.body();
                 postsList = posts.getPost();
+
+                Log.i("sortByDate", String.valueOf(sortByDate));
+                if (sortByDate != true) {
+                    Collections.sort(postsList, new Comparator<Post>() {
+                        @Override
+                        public int compare(Post post, Post t1) {
+                            return (int) t1.getLikes() - post.getLikes();
+                        }
+                    });
+                } else {
+                    Collections.sort(postsList, new Comparator<Post>() {
+                        @Override
+                        public int compare(Post post, Post t1) {
+                            return post.getDate().compareTo(t1.getDate());
+                        }
+                    });
+                }
 
                 // Filtering and Sorting code will probably go here
                 // get a list of all posts
@@ -213,6 +244,8 @@ public class PostsActivity extends AppCompatActivity {
         });
 
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
