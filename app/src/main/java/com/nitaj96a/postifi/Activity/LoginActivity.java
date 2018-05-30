@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -32,7 +33,6 @@ public class LoginActivity extends AppCompatActivity {
     private UserService userService;
     private JSONContainerUser containerUser;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +43,6 @@ public class LoginActivity extends AppCompatActivity {
 
     public void login(final String username, final String password) {
         userService = ServiceUtils.userService;
-
 //        Call<ResponseBody> responseBodyCall = userService.getUserByUsernameResponseBody(username);
 //
 //        responseBodyCall.enqueue(new Callback<ResponseBody>() {
@@ -61,31 +60,43 @@ public class LoginActivity extends AppCompatActivity {
 
         Call<JSONContainerUser> call = userService.getUserByUsername(username);
 
+
         call.enqueue(new Callback<JSONContainerUser>() {
             @Override
             public void onResponse(Call<JSONContainerUser> call, Response<JSONContainerUser> response) {
                 containerUser = response.body();
-                user = containerUser.getUser();
-                Log.i("response", user.toString());
-                Log.i("response1", response.raw().body().toString());
-                Log.i("responsebody", response.body().toString());
-                //Log.i("responsebodyusername", response.body().getUsername());
-                if (user.getUsername().equals(username) && user.getPassword().equals(password)){
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                if (containerUser != null) {
+                    user = containerUser.getUser();
 
-                    // Better store a JWT ...
-                    editor.putString("currentUser", new Gson().toJson(user));
+                    if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
 
-                    editor.commit();
+                        // Better store a JWT ...
+                        editor.putString("currentUser", new Gson().toJson(user));
+                        editor.putInt("currentUserId", user.getId());
+                        editor.commit();
+                        Intent intent = new Intent(getApplicationContext(), PostsActivity.class);
+                        startActivity(intent);
+
+
+                        finish();
+                    } else {
+                        Toast.makeText(LoginActivity.this,"Wrong password",Toast.LENGTH_SHORT).show();
+                    };
+                } else {
+                    Toast.makeText(LoginActivity.this,"No such user",Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<JSONContainerUser> call, Throwable t) {
                 // Make a toast or something...
+                Toast.makeText(LoginActivity.this,"Login failed",Toast.LENGTH_SHORT).show();
                 t.printStackTrace();
             }
+
         });
+
     }
 
     public void btnStartPostsActivity(View view) {
@@ -97,12 +108,12 @@ public class LoginActivity extends AppCompatActivity {
         username = usernameEditText.getText().toString();
         password = passwordEditText.getText().toString();
 
+        Toast.makeText(LoginActivity.this,"Attempting login",Toast.LENGTH_SHORT).show();
+
         login(username, password);
 
-        Intent intent = new Intent(this, PostsActivity.class);
-        startActivity(intent);
 
-        finish();
+
     }
 
 }

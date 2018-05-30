@@ -1,10 +1,14 @@
 package com.nitaj96a.postifi.Activity;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -21,15 +25,18 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.nitaj96a.postifi.CommentAdapter;
 import com.nitaj96a.postifi.Model.Comment;
 import com.nitaj96a.postifi.Model.JSONArrayContainerComments;
 import com.nitaj96a.postifi.Model.Post;
+import com.nitaj96a.postifi.Model.User;
 import com.nitaj96a.postifi.Pager;
 import com.nitaj96a.postifi.R;
 import com.nitaj96a.postifi.Service.CommentService;
+import com.nitaj96a.postifi.Service.PostService;
 import com.nitaj96a.postifi.Service.ServiceUtils;
 import com.nitaj96a.postifi.TabPostInfo;
 
@@ -49,14 +56,25 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
     private DrawerLayout drawerLayout;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private String comment;
+    private String commentText;
+    private Comment comment;
 
     private Post currentPost;
 
     private Comment selectedComment;
     private CommentService commentService;
+
+    private PostService postService;
     private JSONArrayContainerComments commentsList;
     private List<Comment> comments = new ArrayList<>();
+
+    private SharedPreferences sharedPreferences;
+
+    private List<Comment> newCommentList = new ArrayList<>();
+    private JSONArrayContainerComments newComment;
+    private User currentUser = new User();
+
+    private boolean success = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,20 +104,24 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
                             case R.id.nav_all_posts:
                                 Intent intent_a = new Intent(getBaseContext(), PostsActivity.class);
                                 startActivity(intent_a);
+                                finish();
                                 return true;
                             case R.id.nav_create_post:
                                 Intent intent = new Intent(getBaseContext(), CreatePostActivity.class);
                                 startActivity(intent);
+                                finish();
                                 return true;
                             case R.id.nav_settings:
                                 Intent intent_s = new Intent(getBaseContext(), SettingsActivity.class);
                                 startActivity(intent_s);
+
                                 return true;
                             case R.id.nav_logout:
                                 // Remove login data from SharedPreferences...
                                 Intent intent_l = new Intent(getBaseContext(), LoginActivity.class);
                                 // Clear back-stack to disable back navigation ?
                                 startActivity(intent_l);
+                                finish();
                                 return true;
                         }
                         // Add code here to update the UI based on the item selected
@@ -130,11 +152,28 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
         viewPager.setAdapter(adapter);
         tabLayout.addOnTabSelectedListener(this);
 
+        sharedPreferences =  getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        String currentUserJSON = sharedPreferences.getString("currentUser", "");
+        currentUser.setUsername(new Gson().fromJson(currentUserJSON, User.class).getUsername());
+        currentUser.setId(sharedPreferences.getInt("currentUserId", 0));
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.action_bar_read_post, menu);
+
+        if (!currentPost.getOwner().getUsername().trim().equals(currentUser.getUsername().trim())){
+            Log.i("name", currentPost.getOwner().getUsername());
+            Log.i("logged-in name", currentUser.getUsername());
+            MenuItem item = menu.findItem(R.id.action_delete);
+            item.setVisible(false);
+            item.setEnabled(false);
+        } else {
+            MenuItem item = menu.findItem(R.id.action_delete);
+            item.setVisible(true);
+            item.setEnabled(true);
+        }
         return true;
     }
 
@@ -144,6 +183,26 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
 
             case R.id.action_delete:
                 Log.i("delete", "clicked delete");
+                Toast.makeText(ReadPostActivity.this,"Attempting to delete",Toast.LENGTH_SHORT).show();
+
+                postService = ServiceUtils.postService;
+                Call<Void> call = postService.deletePost(currentPost.getId());
+
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        Toast.makeText(ReadPostActivity.this,"Successful delete",Toast.LENGTH_SHORT).show();
+                        Intent intent_a = new Intent(getBaseContext(), PostsActivity.class);
+                        finish();
+                        startActivity(intent_a);
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Toast.makeText(ReadPostActivity.this,"Failed to delete",Toast.LENGTH_SHORT).show();
+                    }
+                });
                 return true;
 
             case R.id.action_comment:
@@ -151,6 +210,18 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
                 startCommentDialog(this);
                 // Send a POST request to api and create a new comment
                 // toast "Sending comment"
+                if (success == true) {
+
+                    //Refresh the fragment
+//                    Fragment currentFragment = getActivity().getFragmentManager().findFragmentById(R.id.fragment_container);
+//                    if (currentFragment instanceof ...)) {
+//                        FragmentTransaction fragTransaction =   (getActivity()).getFragmentManager().beginTransaction();
+//                        fragTransaction.detach(currentFragment);
+//                        fragTransaction.attach(currentFragment);
+//                        fragTransaction.commit();}
+//                }
+                    success = false;
+                }
                 // if a proper response is received toast "commented successfully"
                 // else toast "commenting failed"
                 return true;
@@ -187,9 +258,38 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
         // Set up the buttons
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                comment = input.getText().toString();
-                Log.i("comment", comment);
+            public void onClick(final DialogInterface dialog, int which) {
+                commentText = input.getText().toString();
+                Toast.makeText(ReadPostActivity.this,"Sending Comment",Toast.LENGTH_SHORT).show();
+
+                newComment = new JSONArrayContainerComments();
+                comment = new Comment();
+                comment.setDescription(commentText);
+                comment.setOwner(currentUser);
+
+                newCommentList.add(comment);
+
+                newComment.setComment(newCommentList);
+                commentService = ServiceUtils.commentService;
+                Call<Comment> call = commentService.createCommentByPostId(currentPost.getId(), comment);
+
+                call.enqueue(new Callback<Comment>() {
+                    @Override
+                    public void onResponse(Call<Comment> call, Response<Comment> response) {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(ReadPostActivity.this, "Commented succesfully", Toast.LENGTH_SHORT).show();
+
+                        }
+                        else Toast.makeText(ReadPostActivity.this,"Failed to comment",Toast.LENGTH_SHORT).show();
+                        dialog.cancel();
+                    }
+
+                    @Override
+                    public void onFailure(Call<Comment> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
+
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -197,6 +297,7 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
                 comment = null;
+                commentText = null;
             }
         });
 

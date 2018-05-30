@@ -85,17 +85,21 @@ public class PostsActivity extends AppCompatActivity {
                                 return true;
                             case R.id.nav_create_post:
                                 Intent intent = new Intent(getBaseContext(), CreatePostActivity.class);
+                                finish();
                                 startActivity(intent);
                                 return true;
                             case R.id.nav_settings:
                                 Intent intent_s = new Intent(getBaseContext(), SettingsActivity.class);
+                                finish();
                                 startActivity(intent_s);
+
                                 return true;
                             case R.id.nav_logout:
                                 // Remove login data from SharedPreferences...
                                 Intent intent_l = new Intent(getBaseContext(), LoginActivity.class);
                                 // Clear back-stack to disable back navigation ?
                                 startActivity(intent_l);
+                                finish();
                                 return true;
                         }
                         // Add code here to update the UI based on the item selected
@@ -182,6 +186,7 @@ public class PostsActivity extends AppCompatActivity {
                 Intent startReadPost = new Intent(PostsActivity.this, ReadPostActivity.class);
                 startReadPost.putExtra("Post", new Gson().toJson(selectedPost));
                 startActivity(startReadPost);
+                finish();
             }
         });
 
