@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -407,4 +408,41 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
         tab.select();
         Log.i("event", "onPageScrolled");
     }
+
+    public void onLikeButtonClick(View view) {
+        postService = ServiceUtils.postService;
+        Call<Void> call = postService.likePostById(currentPost.getId());
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                Toast.makeText(ReadPostActivity.this, "Liked successfully", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                t.printStackTrace();
+                Toast.makeText(ReadPostActivity.this, "Failed to like", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void onDislikeButtonClick(View view) {
+        postService = ServiceUtils.postService;
+        Call<Void> call = postService.dislikePostById(currentPost.getId());
+        Log.i("currentid" , String.valueOf(currentPost.getId()));
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                Toast.makeText(ReadPostActivity.this, "Disliked successfully", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                t.printStackTrace();
+                Toast.makeText(ReadPostActivity.this, "Failed to dislike", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 }

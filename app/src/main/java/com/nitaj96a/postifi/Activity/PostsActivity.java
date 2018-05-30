@@ -226,6 +226,9 @@ public class PostsActivity extends AppCompatActivity {
 
             case R.id.action_add:
                 Log.i("add", "clicked add");
+                Intent intent = new Intent(getBaseContext(), CreatePostActivity.class);
+                finish();
+                startActivity(intent);
                 return true;
 
             case R.id.action_filter:

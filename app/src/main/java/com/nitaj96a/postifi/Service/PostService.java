@@ -38,4 +38,10 @@ public interface PostService {
 
     @DELETE("posts/{id}")
     Call<Void>deletePost(@Path("id") Integer id);
+
+    @GET("posts/like/{id}")
+    Call<Void> likePostById(@Path("id") Integer id);
+
+    @GET("posts/dislike/{id}")
+    Call<Void> dislikePostById(@Path("id") Integer id);
 }
