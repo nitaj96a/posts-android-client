@@ -10,6 +10,8 @@ import com.nitaj96a.postifi.R;
 
 public class SettingsActivity extends PreferenceActivity {
 
+    boolean doubleBackToExitPressedOnce = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

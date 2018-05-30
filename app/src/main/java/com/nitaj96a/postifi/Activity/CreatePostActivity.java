@@ -3,6 +3,7 @@ package com.nitaj96a.postifi.Activity;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -15,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -26,6 +28,26 @@ public class CreatePostActivity extends AppCompatActivity {
     private FusedLocationProviderClient mFusedLocationClient;
     private Post newPost;
 
+    boolean doubleBackToExitPressedOnce = false;
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
+    }
 
     final int MY_PERMISSION_ACCESS_FINE_LOCATION = 45;
     final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 46;
@@ -61,6 +83,7 @@ public class CreatePostActivity extends AppCompatActivity {
                                 return true;
                             case R.id.nav_all_posts:
                                 Intent intent = new Intent(getBaseContext(), PostsActivity.class);
+                                finish();
                                 startActivity(intent);
                                 return true;
                             case R.id.nav_settings:
