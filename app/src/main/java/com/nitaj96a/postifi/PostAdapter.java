@@ -3,6 +3,7 @@ package com.nitaj96a.postifi;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +31,8 @@ public class PostAdapter extends ArrayAdapter<Post> {
         postsList = list;
     }
 
+
+
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -40,8 +43,18 @@ public class PostAdapter extends ArrayAdapter<Post> {
 
         Post currentPost = postsList.get(position);
 
-        ImageView image = (ImageView) listItem.findViewById(R.id.imageView_post_thumb);
-        image.setImageBitmap(currentPost.getPhoto());
+//        AppCompatImageView image = (AppCompatImageView) listItem.findViewById(R.id.imageView_post_thumb);
+//
+//        Log.i("tagname", currentPost.getTag().getName());
+//        if (currentPost.getTag().getName() == "boxing")
+//            image.setImageResource(R.drawable.bg);
+//        else if (currentPost.getTag().getName() == "ps4")
+//            image.setImageResource(R.drawable.ps4);
+//        else if (currentPost.getTag().getName() == "crypto")
+//            image.setImageResource(R.drawable.ethereum);
+//
+//        image.refreshDrawableState();
+
 
         TextView title = (TextView) listItem.findViewById(R.id.textView_post_title);
         title.setText(currentPost.getTitle());
@@ -55,4 +68,5 @@ public class PostAdapter extends ArrayAdapter<Post> {
 
         return listItem;
     }
+
 }

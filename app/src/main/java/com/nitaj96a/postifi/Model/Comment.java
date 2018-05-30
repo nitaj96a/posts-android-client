@@ -1,5 +1,8 @@
 package com.nitaj96a.postifi.Model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -8,13 +11,26 @@ import java.util.Date;
  */
 
 public class Comment implements Serializable{
+    @Expose
+    @SerializedName("id")
     private int id;
     private String title;
+    @Expose
+    @SerializedName("description")
     private String description;
+    @Expose
+    @SerializedName("date")
     private Date date;
+    @Expose
+    @SerializedName("likes")
     private int likes;
+    @Expose
+    @SerializedName("dislikes")
     private int dislikes;
-    private Post postId;
+
+    private transient Post postId;
+    @Expose
+    @SerializedName("owner")
     private User owner;
 
     public Comment(){

@@ -1,6 +1,7 @@
 package com.nitaj96a.postifi.Service;
 
 import com.nitaj96a.postifi.Model.Comment;
+import com.nitaj96a.postifi.Model.JSONArrayContainerComments;
 import com.nitaj96a.postifi.Model.Post;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public interface CommentService {
 
     // tricky url design?
     @GET("comments/post/{id}")
-    Call<ArrayList<Comment>> getCommentsByPostId(@Path("id") Integer id);
+    Call<JSONArrayContainerComments> getCommentsByPostId(@Path("id") Integer id);
 
     // whichever you prefer...
     @POST("comments/post/{id}")

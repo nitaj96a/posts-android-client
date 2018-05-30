@@ -22,9 +22,9 @@ import java.util.List;
 
 public class CommentAdapter extends ArrayAdapter<Comment> {
     private Context mContext;
-    private ArrayList<Comment> commentsList = new ArrayList<>();
+    private List<Comment> commentsList = new ArrayList<>();
 
-    public CommentAdapter(Context context, ArrayList<Comment> list) {
+    public CommentAdapter(Context context, List<Comment> list) {
         super(context, 0, list);
         mContext = context;
         commentsList = list;
@@ -46,11 +46,11 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
         TextView text = (TextView) listItem.findViewById(R.id.textView_comment);
         text.setText(currentComment.getDescription());
 
-//        TextView likesDislikes = (TextView) listItem.findViewById(R.id.textView_like_dislike_count);
-//        likesDislikes.setText(currentComment.getLikes() + " \uD83D\uDC4D " + currentComment.getDislikes() + " \uD83D\uDC4E");
+        TextView likesDislikes = (TextView) listItem.findViewById(R.id.textView_like_dislike_count);
+        likesDislikes.setText(currentComment.getLikes() + " \uD83D\uDC4D " + currentComment.getDislikes() + " \uD83D\uDC4E");
 
         TextView author = (TextView) listItem.findViewById(R.id.textView_author_name);
-        author.setText(currentComment.getOwner().getName());
+        author.setText(currentComment.getOwner().getUsername());
 
         return listItem;
     }

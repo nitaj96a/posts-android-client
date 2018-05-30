@@ -178,6 +178,7 @@ public class PostsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedPost = postsList.get(i);
+                Log.i("selected post",selectedPost.toString());
                 Intent startReadPost = new Intent(PostsActivity.this, ReadPostActivity.class);
                 startReadPost.putExtra("Post", new Gson().toJson(selectedPost));
                 startActivity(startReadPost);

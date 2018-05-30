@@ -20,16 +20,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.nitaj96a.postifi.CommentAdapter;
 import com.nitaj96a.postifi.Model.Comment;
+import com.nitaj96a.postifi.Model.JSONArrayContainerComments;
 import com.nitaj96a.postifi.Model.Post;
 import com.nitaj96a.postifi.Pager;
 import com.nitaj96a.postifi.R;
 import com.nitaj96a.postifi.Service.CommentService;
 import com.nitaj96a.postifi.Service.ServiceUtils;
+import com.nitaj96a.postifi.TabPostInfo;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,7 +55,8 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
 
     private Comment selectedComment;
     private CommentService commentService;
-    private  ArrayList<Comment> commentsList = new ArrayList<>();
+    private JSONArrayContainerComments commentsList;
+    private List<Comment> comments = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,20 +109,26 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
                     }
                 });
 
-        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        String jsonPost = null;
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            jsonPost = extras.getString("Post");
+            Log.i("json current post", jsonPost);
+        }
+        currentPost = new Gson().fromJson(jsonPost, Post.class);
+        Log.i("current post", currentPost.toString());
 
+
+        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         tabLayout.addTab(tabLayout.newTab().setText("Post Info"));
         tabLayout.addTab(tabLayout.newTab().setText("Comments"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         viewPager = (ViewPager) findViewById(R.id.pager);
-
-        Pager adapter = new Pager(getSupportFragmentManager(), tabLayout.getTabCount());
+        Pager adapter = new Pager(getSupportFragmentManager(), tabLayout.getTabCount(), currentPost);
 
         viewPager.setAdapter(adapter);
-
         tabLayout.addOnTabSelectedListener(this);
-
 
     }
 
@@ -191,9 +203,15 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
         builder.show();
     }
 
+
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
         viewPager.setCurrentItem(tab.getPosition());
+
+        if (tabLayout.getSelectedTabPosition() == 0) {
+
+        }
+
         if (tabLayout.getSelectedTabPosition() == 1) {
 
             listView = (ListView) findViewById(R.id.list_view_comments);
@@ -201,12 +219,14 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
 
             commentService = ServiceUtils.commentService;
 
-            Call<ArrayList<Comment>> call = commentService.getCommentsByPostId(currentPost.getId());
+            Call<JSONArrayContainerComments> call = commentService.getCommentsByPostId(currentPost.getId());
 
-            call.enqueue(new Callback<ArrayList<Comment>>() {
+            call.enqueue(new Callback<JSONArrayContainerComments>() {
                 @Override
-                public void onResponse(Call<ArrayList<Comment>> call, Response<ArrayList<Comment>> response) {
+                public void onResponse(Call<JSONArrayContainerComments> call, Response<JSONArrayContainerComments> response) {
                     commentsList = response.body();
+                    comments = commentsList.getComment();
+                    Log.i("comments",comments.toString());
 
                     /*
                     Sort the list here by the criteria
@@ -217,12 +237,12 @@ public class ReadPostActivity extends AppCompatActivity implements TabLayout.OnT
                     GET /comments?sort=date,popularity
                     */
 
-                    commentAdapter = new CommentAdapter(getApplicationContext(), commentsList);
+                    commentAdapter = new CommentAdapter(getApplicationContext(), comments);
                     listView.setAdapter(commentAdapter);
                 }
 
                 @Override
-                public void onFailure(Call<ArrayList<Comment>> call, Throwable t) {
+                public void onFailure(Call<JSONArrayContainerComments> call, Throwable t) {
                     // maybe add some message infoming
                     // the user of the failure, maybe not...
                     t.printStackTrace();
